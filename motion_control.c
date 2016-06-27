@@ -347,7 +347,7 @@ void mc_reset()
 }
 
 /* KEYME SPECIFIC START*/
-void mc_force_servo_wrapper(float force_grip_start, float force_v_max, float gain_decay_factor,
+/*void mc_force_servo_wrapper(float force_grip_start, float force_v_max, float gain_decay_factor,
    float force_grip_gain_pos, float force_grip_gain_neg){
 
   float force_target = force_grip_start;
@@ -369,7 +369,6 @@ void mc_force_servo_wrapper(float force_grip_start, float force_v_max, float gai
     mc_force_servo();
     // report_force_servo_finish();
   }
-
   return;
 }
 
@@ -398,6 +397,6 @@ void mc_force_servo(){
     // move Z-axis to servo_target amt
   }
   return;
-}
+}*/
 
 /* KEYME SPECIFIC END */

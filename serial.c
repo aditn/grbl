@@ -40,7 +40,6 @@ volatile uint8_t tx_buffer_tail = 0;
 
 uint8_t checksum = 0;  //sum all bytes between newlines.
 
-
 void serial_init()
 {
   // Set baud rate
@@ -62,6 +61,10 @@ void serial_init()
   UCSR0B |= 1<<RXCIE0;
 
   // defaults to 8-bit, no parity, 1 stop bit
+
+  // initalize force_servo bit
+  force_servo_enable = 0;
+  collect_servo_info = 0;
 }
 
 
@@ -149,7 +152,10 @@ ISR(SERIAL_RX)
     case CMD_LIMIT_REPORT: request_report(REQUEST_LIMIT_REPORT,0); break;
     case CMD_CYCLE_START: SYS_EXEC |= EXEC_CYCLE_START; break; // Set as true
     case CMD_FEED_HOLD:  SYS_EXEC |= EXEC_FEED_HOLD; break; // Set as true
-    case CMD_FORCE_SERVO: mc_force_servo(); break; // Call to grip key
+    case CMD_FORCE_SERVO: // set force_servo bit and collect force data
+      force_servo_enable = 1;
+      collect_servo_info = 1;
+      break;
     case CMD_RESET:     mc_reset(); break; // Call motion control reset routine.
     default: // Write character to buffer
       next_head = rx_buffer_head + 1;

@@ -28,6 +28,7 @@
 #include "stepper.h"
 #include "motion_control.h"
 #include "report.h"
+#include "print.h"
 
 #define STATUS_REPORT_RATE_MS 333  //3 Hz
 
@@ -152,6 +153,12 @@ void protocol_main_loop()
             char_counter = 0;
           } else if (c >= 'a' && c <= 'z') { // Upcase lowercase
             line[char_counter++] = c-'a'+'A';
+          } else if(force_servo_enable && collect_servo_info){
+            force_servo_data[char_counter] = c;
+            char_counter++;
+            if (char_counter == 32){
+              collect_servo_info = 0;
+            }
           } else {
             line[char_counter++] = c;
           }
@@ -255,6 +262,13 @@ void protocol_execute_runtime()
       if (0==(sysflags.report_rqsts|=reports)) { //if all reports done and no new requests, clear report flag
         bit_false(SYS_EXEC,EXEC_RUNTIME_REPORT);
       }
+    }
+
+    // Execute force servoing
+    if (force_servo_enable && !collect_servo_info){ // also need to include if all data has been accounted for
+      printString(PSTR("I can print!"));
+      //mc_force_servo_wrapper();
+      force_servo_enable = 0;
     }
 
     // Execute a feed hold with deceleration, only during cycle.

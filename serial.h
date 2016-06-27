@@ -35,6 +35,9 @@
 
 #define SERIAL_NO_DATA 0xff
 
+volatile uint8_t force_servo_enable;
+volatile uint8_t collect_servo_info;
+
 void serial_init();
 
 void serial_write(uint8_t data);

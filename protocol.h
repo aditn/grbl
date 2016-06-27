@@ -31,6 +31,26 @@
   #define LINE_BUFFER_SIZE 70
 #endif
 
+// While enabled, force servoing is in process
+extern volatile uint8_t force_servo_enable;
+// While enabled, recieving values to store in fservodata struct
+extern volatile uint8_t collect_servo_info;
+
+// These are initialization values and constraints from the motherboard
+typedef struct{
+  float default_max_grip;
+  float force_grip_start;
+  float force_grip_gain_pos;
+  float force_grip_gain_neg;
+  float gain_decay_factor;
+  float force_v_max;
+  float force_grip_tol;
+  float max_force_tol;
+  uint8_t force_grip_max_iterations;
+}fservodata;
+
+fservodata force_servo_data;
+
 // Starts Grbl main loop. It handles all incoming characters from the serial port and executes
 // them as they complete. It is also responsible for finishing the initialization procedures.
 void protocol_main_loop();
