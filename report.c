@@ -149,6 +149,7 @@ void report_init_message()
 }
 
 // Grbl help message
+// TODO: Would like to add character '|' for reporting voltage of C,X,Y,Z,F
 void report_grbl_help() {
   printPgmString(PSTR("$$ (view Grbl settings)\r\n"
                       "$# (view # parameters)\r\n"

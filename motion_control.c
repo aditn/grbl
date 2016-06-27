@@ -345,3 +345,59 @@ void mc_reset()
     }
   }
 }
+
+/* KEYME SPECIFIC START*/
+void mc_force_servo_wrapper(float force_grip_start, float force_v_max, float gain_decay_factor,
+   float force_grip_gain_pos, float force_grip_gain_neg){
+
+  float force_target = force_grip_start;
+  float grip_force = voltage_result[4]; // Current force sensor value
+  float error;
+
+  if ((force_target == force_v_max) &&
+      ((grip_force >= (force_v_max - max_force_tol)) || (servo_target >= max_grip))){
+    if (servo_target >= max_grip){
+      grip_force = force_v_max;
+    }
+    // report_force_servo_finish();
+
+  else if (abs(grip_force - force_target) < force_grip_tol){
+    // report_force_servo_finish();
+  }
+
+  else{
+    mc_force_servo();
+    // report_force_servo_finish();
+  }
+
+  return;
+}
+
+// This performs the change in Gripper Motor
+void mc_force_servo(){
+  float error;
+  int servo_iter;
+  // Keep trying to reach target force value until force_grip_max_iterations
+  for (servo_iter=0; servo_iter<= force_grip_max_iter; servo_iter++){
+    error = force_target - grip_force;
+    if ((error > 0.0) && (gain_scaling_state == 0)){
+      gain_scaling *= gain_decay_factor;
+      gain_scaling_state = 1;
+    }
+    else if ((error < 0.0) && (gain_scaling_state == 1)){
+      gain_scaling *= gain_decay_factor;
+      gain_scaling_state = 0;
+    }
+
+    if (error < 0.0){
+      servo_target += (error * force_grip_gain_neg * gain_scaling);
+    }
+    else {
+      servo_target += (error * force_grip_gain_pos * gain_scaling);
+    }
+    // move Z-axis to servo_target amt
+  }
+  return;
+}
+
+/* KEYME SPECIFIC END */

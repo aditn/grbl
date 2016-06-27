@@ -56,6 +56,8 @@
 #define CMD_VOLTAGE_REPORT '|'
 #define CMD_LINE_START '@'    //special start, not picked off, to ensure proper sequencing.
 
+#define CMD_FORCE_SERVO 'F'
+
 // If homing is enabled, homing init lock sets Grbl into an alarm state upon power up. This forces
 // the user to perform the homing cycle (or override the locks) before doing anything else. This is
 // mainly a safety feature to remind the user to home, since position is unknown to Grbl.

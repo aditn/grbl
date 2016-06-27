@@ -43,6 +43,10 @@ void mc_homing_cycle(uint8_t axis_mask);
 // Perform tool length probe cycle. Requires probe switch.
 void mc_probe_cycle(float *target, float feed_rate, uint8_t invert_feed_rate, linenumber_t line_number);
 
+extern float voltage_result[5];
+// Performs force servoing to grip motor.
+void mc_force_servo();
+
 // Performs system reset. If in motion state, kills all motion and sets system alarm.
 void mc_reset();
 
