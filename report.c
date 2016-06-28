@@ -414,7 +414,7 @@ uint8_t report_realtime_status()
 
   float print_position[N_AXIS];
 
-  // Report current machine state
+  /*// Report current machine state
   switch (sys.state) {
     case STATE_IDLE: printPgmString(PSTR("<Idle")); break;
     case STATE_QUEUED: printPgmString(PSTR("<Queue")); break;
@@ -456,7 +456,7 @@ uint8_t report_realtime_status()
 
   printPgmString(PSTR(":"));
   printInteger(ln);
-  printPgmString(PSTR(">\r\n"));
+  printPgmString(PSTR(">\r\n"));*/
 
   return (sys.flags & SYSFLAG_EOL_REPORT); //returns True if more work to do
 
@@ -468,9 +468,9 @@ void report_limit_pins()
   if (bit_istrue(settings.flags,BITFLAG_INVERT_LIMIT_PINS)) {
          limit_state^=LIMIT_MASK;
   }
-  printPgmString(PSTR("/"));
+  /*printPgmString(PSTR("/"));
   printInteger((ESTOP_PIN>>ESTOP_BIT)&1);
   printInteger(probe_get_state()?1:0);
   print_uint8_base2(limit_state);
-  printPgmString(PSTR("/\r\n"));
+  printPgmString(PSTR("/\r\n"));*/
 }

@@ -30,7 +30,7 @@
 
 DEVICE     ?= atmega2560
 CLOCK      = 16000000
-PROGRAMMER ?= -c avrisp2 -P /dev/ttyUSB0 -v -v
+PROGRAMMER ?= -c avrisp2 -P /dev/ttyACM0 -v -v
 OBJECTS    = main.o motion_control.o gcode.o spindle_control.o coolant_control.o serial.o \
              protocol.o stepper.o eeprom.o settings.o planner.o nuts_bolts.o limits.o \
              print.o probe.o report.o system.o counters.o
@@ -42,8 +42,8 @@ FUSES      = -U hfuse:w:0xd8:m -U lfuse:w:0xff:m
 # Tune the lines below only if you know what you are doing:
 
 AVRDUDE = avrdude  $(PROGRAMMER) -p $(DEVICE) -B 10 -F -D
-CFLAGS = -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -I
-COMPILE = avr-gcc $(CFLAGS) -ffunction-sections
+CFLAGS = -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
+COMPILE = avr-gcc $(CFLAGS) -I. -ffunction-sections
 
 # symbolic targets:
 all debug:	grbl.hex

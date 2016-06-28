@@ -54,6 +54,7 @@
 #define EXEC_RESET          bit(4) // bitmask 00010000
 #define EXEC_ALARM          bit(5) // bitmask 00100000
 #define EXEC_CRIT_EVENT     bit(6) // bitmask 01000000
+#define EXEC_FORCE_SERVO    bit(7) // bitmask 10000000
 //
 
 #define REQUEST_STATUS_REPORT  bit(0)

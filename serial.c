@@ -153,7 +153,7 @@ ISR(SERIAL_RX)
     case CMD_CYCLE_START: SYS_EXEC |= EXEC_CYCLE_START; break; // Set as true
     case CMD_FEED_HOLD:  SYS_EXEC |= EXEC_FEED_HOLD; break; // Set as true
     case CMD_FORCE_SERVO: // set force_servo bit and collect force data
-      force_servo_enable = 1;
+      SYS_EXEC |= EXEC_FORCE_SERVO;
       collect_servo_info = 1;
       break;
     case CMD_RESET:     mc_reset(); break; // Call motion control reset routine.

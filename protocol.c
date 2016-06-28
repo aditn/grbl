@@ -153,10 +153,12 @@ void protocol_main_loop()
             char_counter = 0;
           } else if (c >= 'a' && c <= 'z') { // Upcase lowercase
             line[char_counter++] = c-'a'+'A';
-          } else if(force_servo_enable && collect_servo_info){
-            force_servo_data[char_counter] = c;
+          } else if(SYS_EXEC && collect_servo_info){
+            enter_servo_data(char_counter,c);
             char_counter++;
-            if (char_counter == 32){
+            //printInteger(char_counter);
+            if (char_counter == 31){
+              printPgmString(PSTR("IM DONE BITCHES!\r\n"));
               collect_servo_info = 0;
             }
           } else {
@@ -265,10 +267,11 @@ void protocol_execute_runtime()
     }
 
     // Execute force servoing
-    if (force_servo_enable && !collect_servo_info){ // also need to include if all data has been accounted for
-      printString(PSTR("I can print!"));
+    //if (force_servo_enable && !collect_servo_info){ // also need to include if all data has been accounted for
+    if ((rt_exec & EXEC_FORCE_SERVO) && !collect_servo_info){  
+      printPgmString(PSTR("I can print!\r\n"));
+      bit_false(SYS_EXEC,EXEC_FORCE_SERVO);
       //mc_force_servo_wrapper();
-      force_servo_enable = 0;
     }
 
     // Execute a feed hold with deceleration, only during cycle.
@@ -350,4 +353,145 @@ void protocol_buffer_synchronize()
 // single commands), or the planner buffer is full and ready to go.
 void protocol_auto_cycle_start() {
   if (sys.flags & SYSFLAG_AUTOSTART) { SYS_EXEC |= EXEC_CYCLE_START; }
+}
+
+
+//
+void enter_servo_data(uint8_t char_counter, uint8_t c){
+  uint8_t *p;
+  switch(char_counter){
+    case(0):
+      p = (uint8_t *)(&(force_servo_data.default_max_grip));
+      p[0] = c;
+      break;
+    case(1):
+      p = (uint8_t *)&force_servo_data.default_max_grip;
+      p[1] = c;
+      break;
+    case(2):
+      p = (uint8_t *)&force_servo_data.default_max_grip;
+      p[2] = c;
+      break;
+    case(3):
+      p = (uint8_t *)&force_servo_data.default_max_grip;
+      p[3] = c;
+      printInteger((uint32_t)(force_servo_data.default_max_grip+1.0));
+      break;
+    case(4):
+      p = (uint8_t *)&force_servo_data.force_grip_start;
+      p[0] = c;
+      break;
+    case(5):
+      p = (uint8_t *)&force_servo_data.force_grip_start;
+      p[1] = c;
+      break;
+    case(6):
+      p = (uint8_t *)&force_servo_data.force_grip_start;
+      p[2] = c;
+      break;
+    case(7):
+      p = (uint8_t *)&force_servo_data.force_grip_start;
+      p[3] = c;
+      break;
+    case(8):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_pos;
+      p[0] = c;
+      break;
+    case(9):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_pos;
+      p[1] = c;
+      break;
+    case(10):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_pos;
+      p[2] = c;
+      break;
+    case(11):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_pos;
+      p[3] = c;
+      break;
+    case(12):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_neg;
+      p[0] = c;
+      break;
+    case(13):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_neg;
+      p[1] = c;
+      break;
+    case(14):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_neg;
+      p[2] = c;
+      break;
+    case(15):
+      p = (uint8_t *)&force_servo_data.force_grip_gain_neg;
+      p[3] = c;
+      break;
+    case(16):
+      p = (uint8_t *)&force_servo_data.gain_decay_factor;
+      p[0] = c;
+      break;
+    case(17):
+      p = (uint8_t *)&force_servo_data.gain_decay_factor;
+      p[1] = c;
+      break;
+    case(18):
+      p = (uint8_t *)&force_servo_data.gain_decay_factor;
+      p[2] = c;
+      break;
+    case(19):
+      p = (uint8_t *)&force_servo_data.gain_decay_factor;
+      p[3] = c;
+      break;
+    case(20):
+      p = (uint8_t *)&force_servo_data.force_v_max;
+      p[0] = c;
+      break;
+    case(21):
+      p = (uint8_t *)&force_servo_data.force_v_max;
+      p[1] = c;
+      break;
+    case(22):
+      p = (uint8_t *)&force_servo_data.force_v_max;
+      p[2] = c;
+      break;
+    case(23):
+      p = (uint8_t *)&force_servo_data.force_v_max;
+      p[3] = c;
+      break;
+    case(24):
+      p = (uint8_t *)&force_servo_data.force_grip_tol;
+      p[0] = c;
+      break;
+    case(25):
+      p = (uint8_t *)&force_servo_data.force_grip_tol;
+      p[1] = c;
+      break;
+    case(26):
+      p = (uint8_t *)&force_servo_data.force_grip_tol;
+      p[2] = c;
+      break;
+    case(27):
+      p = (uint8_t *)&force_servo_data.force_grip_tol;
+      p[3] = c;
+      break;
+    case(28):
+      p = (uint8_t *)&force_servo_data.max_force_tol;
+      p[0] = c;
+      break;
+    case(29):
+      p = (uint8_t *)&force_servo_data.max_force_tol;
+      p[1] = c;
+      break;
+    case(30):
+      p = (uint8_t *)&force_servo_data.max_force_tol;
+      p[2] = c;
+      break;
+    case(31):
+      p = (uint8_t *)&force_servo_data.max_force_tol;
+      p[3] = c;
+      break;
+    case(32):
+      force_servo_data.force_grip_max_iterations = c;
+      break; 
+  }
+  return;
 }

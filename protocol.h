@@ -31,6 +31,7 @@
   #define LINE_BUFFER_SIZE 70
 #endif
 
+
 // While enabled, force servoing is in process
 extern volatile uint8_t force_servo_enable;
 // While enabled, recieving values to store in fservodata struct
@@ -50,6 +51,9 @@ typedef struct{
 }fservodata;
 
 fservodata force_servo_data;
+
+// Places data from motherboard into fservodata struct
+void enter_servo_data(uint8_t char_counter, uint8_t c);
 
 // Starts Grbl main loop. It handles all incoming characters from the serial port and executes
 // them as they complete. It is also responsible for finishing the initialization procedures.
