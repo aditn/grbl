@@ -117,56 +117,58 @@ void protocol_main_loop()
         iscomment = false;
         char_counter = 0;
       } else {
-        if (iscomment) {
-          // Throw away all comment characters
-          if (c == ')') {
-            // End of comment. Resume line.
-            iscomment = false;
-          }
-        } else {
-          if (c <= ' ') {
-            // Throw away whitepace and control characters
-          } else if (c == '/') {
-            // Block delete NOT SUPPORTED. Ignore character.
-            // NOTE: If supported, would simply need to check the system if block delete is enabled.
-          } else if (c == '(') {
-            // Enable comments flag and ignore all characters until ')' or EOL.
-            // NOTE: This doesn't follow the NIST definition exactly, but is good enough for now.
-            // In the future, we could simply remove the items within the comments, but retain the
-            // comment control characters, so that the g-code parser can error-check it.
-            iscomment = true;
-          // } else if (c == ';') {
-            // Comment character to EOL NOT SUPPORTED. LinuxCNC definition. Not NIST.
-
-          // TODO: Install '%' feature
-          // } else if (c == '%') {
-            // Program start-end percent sign NOT SUPPORTED.
-            // NOTE: This maybe installed to tell Grbl when a program is running vs manual input,
-            // where, during a program, the system auto-cycle start will continue to execute
-            // everything until the next '%' sign. This will help fix resuming issues with certain
-            // functions that empty the planner buffer to execute its task on-time.
-
-          } else if (char_counter >= LINE_BUFFER_SIZE-1) {
-            // Detect line buffer overflow. Report error and reset line buffer.
-            report_status_message(STATUS_OVERFLOW);
-            iscomment = false;
-            char_counter = 0;
-          } else if (c >= 'a' && c <= 'z') { // Upcase lowercase
-            line[char_counter++] = c-'a'+'A';
-          } else if(SYS_EXEC && collect_servo_info){
-            enter_servo_data(char_counter,c);
+          if((SYS_EXEC & EXEC_FORCE_SERVO) && collect_servo_info){
+            collect_servo_info=0;
+            /*enter_servo_data(char_counter,c);
             char_counter++;
-            //printInteger(char_counter);
             if (char_counter == 31){
               printPgmString(PSTR("IM DONE BITCHES!\r\n"));
               collect_servo_info = 0;
+            }*/
+          } 
+          else if (iscomment) {
+            // Throw away all comment characters
+            if (c == ')') {
+              // End of comment. Resume line.
+              iscomment = false;
             }
-          } else {
-            line[char_counter++] = c;
+          }
+          else {
+            if (c <= ' ') {
+              // Throw away whitepace and control characters
+            } else if (c == '/') {
+              // Block delete NOT SUPPORTED. Ignore character.
+              // NOTE: If supported, would simply need to check the system if block delete is enabled.
+            } else if (c == '(') {
+              // Enable comments flag and ignore all characters until ')' or EOL.
+              // NOTE: This doesn't follow the NIST definition exactly, but is good enough for now.
+              // In the future, we could simply remove the items within the comments, but retain the
+              // comment control characters, so that the g-code parser can error-check it.
+              iscomment = true;
+            // } else if (c == ';') {
+              // Comment character to EOL NOT SUPPORTED. LinuxCNC definition. Not NIST.
+
+            // TODO: Install '%' feature
+            // } else if (c == '%') {
+              // Program start-end percent sign NOT SUPPORTED.
+              // NOTE: This maybe installed to tell Grbl when a program is running vs manual input,
+              // where, during a program, the system auto-cycle start will continue to execute
+              // everything until the next '%' sign. This will help fix resuming issues with certain
+              // functions that empty the planner buffer to execute its task on-time.
+
+            } else if (char_counter >= LINE_BUFFER_SIZE-1) {
+              // Detect line buffer overflow. Report error and reset line buffer.
+              report_status_message(STATUS_OVERFLOW);
+              iscomment = false;
+              char_counter = 0;
+            } else if (c >= 'a' && c <= 'z') { // Upcase lowercase
+              line[char_counter++] = c-'a'+'A';
+            } else {
+              line[char_counter++] = c;
+            }
           }
         }
       }
-    }
 
     // If there are no more characters in the serial read buffer to be processed and executed,
     // this indicates that g-code streaming has either filled the planner buffer or has
@@ -271,7 +273,7 @@ void protocol_execute_runtime()
     if ((rt_exec & EXEC_FORCE_SERVO) && !collect_servo_info){  
       printPgmString(PSTR("I can print!\r\n"));
       bit_false(SYS_EXEC,EXEC_FORCE_SERVO);
-      //mc_force_servo_wrapper();
+      mc_force_servo_wrapper();
     }
 
     // Execute a feed hold with deceleration, only during cycle.
